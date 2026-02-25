@@ -1,33 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
 
-export default function SearchBar({
-  onSearch,
-  onSelectSuggestion,
-  suggestions,
-  loading,
-  onGeolocate,
-}) {
+export default function SearchBar({ onSearch, onSelectSuggestion, suggestions, loading, onGeolocate }) {
   const [query, setQuery] = useState('');
   const debounceRef = useRef(null);
   const inputRef = useRef(null);
 
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+  useEffect(() => { inputRef.current?.focus(); }, []);
 
   function handleChange(e) {
-    const val = e.target.value;
-    setQuery(val);
+    setQuery(e.target.value);
     clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      onSearch(val);
-    }, 300);
-  }
-
-  function handleKeyDown(e) {
-    if (e.key === 'Enter' && suggestions.length > 0) {
-      handleSelect(suggestions[0]);
-    }
+    debounceRef.current = setTimeout(() => onSearch(e.target.value), 300);
   }
 
   function handleSelect(city) {
@@ -38,40 +21,17 @@ export default function SearchBar({
   return (
     <div className="search-container">
       <div className="search-bar">
-        <span className="search-icon">🔍</span>
-        <input
-          ref={inputRef}
-          type="text"
-          placeholder="Search city, e.g. Mumbai, London, New York..."
-          value={query}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          className="search-input"
-          autoComplete="off"
-        />
-        {loading && <span className="search-spinner" />}
-        <button
-          className="geolocate-btn"
-          onClick={onGeolocate}
-          title="Use my location"
-          aria-label="Use my location"
-        >
-          📍
-        </button>
+        <input ref={inputRef} type="text" placeholder="Search city..." value={query}
+          onChange={handleChange} onKeyDown={(e) => e.key === 'Enter' && suggestions[0] && handleSelect(suggestions[0])}
+          className="search-input" autoComplete="off" />
+        {loading && <span>...</span>}
+        <button className="geolocate-btn" onClick={onGeolocate} title="Use my location">📍</button>
       </div>
-
       {suggestions.length > 0 && (
         <ul className="suggestions-list">
           {suggestions.map((city, i) => (
-            <li
-              key={`${city.name}-${city.latitude}-${i}`}
-              className="suggestion-item"
-              onClick={() => handleSelect(city)}
-            >
-              <span className="suggestion-name">
-                {city.name}
-                {city.admin1 ? <span className="suggestion-region">, {city.admin1}</span> : null}
-              </span>
+            <li key={`${city.name}-${city.latitude}-${i}`} className="suggestion-item" onClick={() => handleSelect(city)}>
+              <span>{city.name}{city.admin1 && <span className="suggestion-region">, {city.admin1}</span>}</span>
               <span className="suggestion-country">{city.country}</span>
             </li>
           ))}

@@ -75,7 +75,6 @@ export function useWeather() {
 
   const fetchByCoords = useCallback(
     async (lat, lon) => {
-      // Reverse geocode with Open-Meteo geocoding (no reverse, so use a fallback name)
       await fetchWeather(lat, lon, 'Your Location', '', '');
     },
     [fetchWeather]
