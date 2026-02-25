@@ -1,4 +1,3 @@
-// WMO Weather Interpretation Codes
 export const WMO_CODES = {
   0: { label: 'Clear Sky', icon: '☀️', bg: 'clear' },
   1: { label: 'Mainly Clear', icon: '🌤️', bg: 'clear' },
